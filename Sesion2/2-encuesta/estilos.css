@@ -1,0 +1,14 @@
+form {
+    padding-left: 10px;
+    display: flex;
+    flex-direction: column;
+    background-color: moccasin;
+}
+
+.botones {
+    margin: 10px;
+}
+
+.error {
+    color: red;
+}
