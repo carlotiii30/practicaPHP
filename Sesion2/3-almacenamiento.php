@@ -1,4 +1,6 @@
 <?php
+
+// Iniciamos la sesión
 session_start();
 
 // Si se pulsa el botón de borrar.
@@ -7,14 +9,16 @@ if (isset($_POST['borrar'])) {
     session_destroy();
 }
 
-// Si se introduce el nombre.
+// Si se introduce el nombre, lo guardamos en la variable de sesión.
 if (isset($_POST['nombre'])) {
-    $_SESSION['nombre'] = $_POST['nombre'];
+    $nombre = strip_tags($_POST['nombre']);
+    htmlentities($nombre, ENT_QUOTES);
+    $_SESSION['nombre'] = $nombre;
     $_SESSION['numeros'] = array();
 }
 
-// Si es la primera vez que visitamos, mostramos el formulario
-if (!isset($_SESSION['nombre'])) {
+// Si es la primera vez que visitamos o hemos borrado sesión, mostramos el formulario
+if (!isset($_SESSION['nombre']) || isset($_POST['borrar'])) {
     echo <<<HTML
         <!DOCTYPE html>
         <html lang="es">
@@ -44,19 +48,18 @@ else {
     echo "<p> Bienvenido, {$_SESSION['nombre']} </p>";
 
     if (isset($_SESSION['numeros'])) {
+        // Generar un nuevo número aleatorio.
+        $nuevo_numero = rand();
+        $_SESSION['numeros'][] = $nuevo_numero;
 
-        // Lista de números generados
+        // Lista de números generados menos el último, es decir, el que acabamos de generar.
         echo "<ol>";
-        foreach ($_SESSION['numeros'] as $num)
-            echo "<li> $num </li>";
+        for ($i = 0; $i < count($_SESSION['numeros']) - 1; $i++)
+            echo "<li>" . $_SESSION['numeros'][$i] . "</li>";
         echo "</ol>";
 
-        if (isset($_POST['enviar'])) {
-            // Generar un nuevo número aleatorio y mostrarlo
-            $nuevo_numero = rand();
-            echo "<p> El nuevo número es: $nuevo_numero </p>";
-            $_SESSION['numeros'][] = $nuevo_numero;
-        }
+        // El numero que acabo de generar.
+        echo "<p> El nuevo número es: $nuevo_numero </p>";
     }
 
     // Formulario.
@@ -75,4 +78,5 @@ else {
         </html>
     HTML;
 }
+
 ?>
